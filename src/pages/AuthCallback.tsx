@@ -77,8 +77,9 @@ export function AuthCallback() {
 
     const checkPortfolioAndRedirect = async (accessToken: string) => {
       try {
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
         const response = await fetch(
-          `https://${projectId}.supabase.co/functions/v1/make-server-22c8dcd8/portfolio/get`,
+          `${backendUrl}/api/portfolio/check`,
           {
             headers: {
               'Authorization': `Bearer ${accessToken}`,
@@ -88,17 +89,17 @@ export function AuthCallback() {
 
         const data = await response.json();
         
-        if (data.portfolio) {
+        if (data.hasPortfolio && data.portfolio) {
           console.log('Portfolio found, redirecting to dashboard');
           navigate('/user-dashboard');
         } else {
-          console.log('No portfolio found, redirecting to setup');
-          navigate('/portfolio-setup');
+          console.log('No portfolio found, redirecting to onboarding');
+          navigate('/onboarding');
         }
       } catch (error) {
         console.error('Error checking portfolio:', error);
-        // If portfolio check fails, still proceed to setup
-        navigate('/portfolio-setup');
+        // If portfolio check fails, proceed to onboarding
+        navigate('/onboarding');
       }
     };
 

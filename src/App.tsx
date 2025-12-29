@@ -20,6 +20,8 @@ import { UserDashboard } from "./pages/UserDashboard";
 import { AuthFeatures } from "./pages/AuthFeatures";
 import { Demo } from "./pages/Demo";
 import { ApiLanding } from "./pages/ApiLanding";
+import { LandingRedesign } from "./pages/LandingRedesign";
+import { Onboarding } from "./pages/Onboarding";
 
 export default function App() {
   return (
@@ -30,9 +32,11 @@ export default function App() {
         {/* Public routes without layout */}
         <Route path="/login" element={<Login />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/landing" element={<LandingRedesign />} />
 
         {/* Protected routes without layout */}
         <Route path="/portfolio-setup" element={<PortfolioSetup />} />
+        <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/user-dashboard" element={<UserDashboard />} />
 
         {/* Main public routes with layout */}
