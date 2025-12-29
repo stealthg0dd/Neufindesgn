@@ -7,6 +7,7 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { motion, AnimatePresence } from 'motion/react';
 import { createClient } from '../../utils/supabase/client';
+import { fetchQuotes } from '../../utils/market';
 import { CheckCircle, ArrowRight, Plus, Trash2, Building2, TrendingUp, AlertCircle } from 'lucide-react';
 
 // ============================================
@@ -433,8 +434,27 @@ export function OnboardingFlow() {
       setStep('reveal');
     } catch (error) {
       console.error('Error analyzing portfolio:', error);
-      // Fallback: generate demo score
-      setAlphaScore(Math.random() * 15);
+      // Fallback: compute a simple score from live quotes when backend unavailable
+      try {
+        const symbols = holdings.map(h => h.ticker || h.symbol).filter(Boolean);
+        const quotes = await fetchQuotes(symbols as string[]);
+        // Simple heuristic: average % gain vs cost-basis -> alpha score 0-10
+        let totalScore = 0;
+        let count = 0;
+        holdings.forEach((h: any) => {
+          const sym = h.ticker || h.symbol;
+          const price = quotes[sym]?.price ?? null;
+          if (price != null && h.costBasis) {
+            const ret = ((price - h.costBasis) / h.costBasis) * 100;
+            totalScore += Math.max(0, Math.min(10, (ret / 5)) );
+            count += 1;
+          }
+        });
+        const computed = count ? Math.round((totalScore / count) * 10) / 10 : Math.round(Math.random() * 6 * 10) / 10;
+        setAlphaScore(computed);
+      } catch (err) {
+        setAlphaScore(Math.round(Math.random() * 15 * 10) / 10);
+      }
       setStep('reveal');
     } finally {
       setLoading(false);
