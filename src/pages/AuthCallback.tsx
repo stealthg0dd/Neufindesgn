@@ -88,6 +88,25 @@ export function AuthCallback() {
         );
 
         const data = await response.json();
+        // If user selected free trial before OAuth, activate it (best-effort)
+        try {
+          const wantTrial = localStorage.getItem('neufin_free_trial') === '1';
+          if (wantTrial) {
+            // Inform backend to activate trial for this user (optional)
+            fetch(`${backendUrl}/api/user/start-trial`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ source: 'oauth', durationDays: 14 })
+            }).catch(() => {});
+            try { localStorage.removeItem('neufin_free_trial'); } catch (e) {}
+            try { localStorage.setItem('neufin_free_trial_active', '1'); } catch (e) {}
+          }
+        } catch (e) {
+          console.warn('Free trial activation skipped', e);
+        }
         
         if (data.hasPortfolio && data.portfolio) {
           console.log('Portfolio found, redirecting to dashboard');

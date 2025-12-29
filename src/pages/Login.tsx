@@ -14,6 +14,7 @@ export function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSetupGuide, setShowSetupGuide] = useState(false);
+  const [freeTrial, setFreeTrial] = useState<boolean>(fromFreeTrial || false);
   const navigate = useNavigate();
   const location = useLocation();
   const supabase = createClient();
@@ -60,6 +61,8 @@ export function Login() {
     try {
       setIsLoading(true);
       setError(null);
+      // Persist free trial choice so AuthCallback can detect it after redirect
+      try { localStorage.setItem('neufin_free_trial', freeTrial ? '1' : '0'); } catch (e) {}
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -168,6 +171,30 @@ export function Login() {
                 : 'Access your personalized bias-free trading dashboard'
               }
             </p>
+          </div>
+
+          {/* Free trial selection */}
+          <div className="mb-4 flex items-center justify-center space-x-3">
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="radio"
+                name="trial"
+                checked={freeTrial}
+                onChange={() => setFreeTrial(true)}
+                className="accent-purple-500"
+              />
+              <span className="text-sm">Start 14-day free trial</span>
+            </label>
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="radio"
+                name="trial"
+                checked={!freeTrial}
+                onChange={() => setFreeTrial(false)}
+                className="accent-purple-500"
+              />
+              <span className="text-sm">Sign in (no trial)</span>
+            </label>
           </div>
           
           {/* What You Get - Only show when coming from free trial */}

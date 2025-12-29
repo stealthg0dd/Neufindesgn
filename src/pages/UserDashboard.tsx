@@ -18,6 +18,7 @@ import {
   Newspaper, DollarSign, Users, Satellite, Calendar
 } from 'lucide-react';
 import { toast } from 'sonner@2.0.3';
+import { fetchQuotes } from '../utils/market';
 
 // Types
 interface UserProfile {
@@ -38,6 +39,9 @@ interface AlphaSignal {
   sources: number;
   timestamp: string;
   category: string;
+  price?: number | null;
+  change?: number | null;
+  percentChange?: number | null;
 }
 
 interface DataSource {
@@ -130,7 +134,7 @@ export function UserDashboard() {
     }
   };
 
-  const loadDashboardData = () => {
+  const loadDashboardData = async () => {
     // Production-grade mock data that matches backend API structure
     const signals: AlphaSignal[] = [
       {
@@ -316,6 +320,22 @@ export function UserDashboard() {
     ];
 
     setActiveSignals(signals);
+    // Enrich signals with live market quotes when API key is available
+    try {
+      const symbols = signals.map(s => s.asset).filter(Boolean);
+      if (symbols.length > 0) {
+        const quotes = await fetchQuotes(symbols);
+        const enriched = signals.map(s => ({
+          ...s,
+          price: quotes[s.asset]?.price ?? null,
+          change: quotes[s.asset]?.change ?? null,
+          percentChange: quotes[s.asset]?.percentChange ?? null
+        }));
+        setActiveSignals(enriched);
+      }
+    } catch (err) {
+      console.warn('Failed to fetch live quotes for signals', err);
+    }
     setDataSources(sources);
     setSentimentData(sentiments);
   };
