@@ -20,8 +20,8 @@ export interface CandleData {
   volume: number;
 }
 
-const BACKEND_URL = 'https://gpczchjipalfgkfqamcu.supabase.co/functions/v1/make-server-22c8dcd8';
-const FINNHUB_API_KEY = 'ctdc3s9r01qk0c1uo82gctdc3s9r01qk0c1uo830';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || `https://${import.meta.env.VITE_SUPABASE_PROJECT_ID}.supabase.co/functions/v1/make-server-22c8dcd8`;
+const FINNHUB_API_KEY = import.meta.env.VITE_FINNHUB_API_KEY || '';
 
 // Check if backend is available
 export async function checkBackendHealth(): Promise<boolean> {
@@ -77,6 +77,7 @@ async function fetchQuoteFromBackend(symbol: string, accessToken: string): Promi
 // Fetch stock quote from Finnhub (fallback)
 async function fetchQuoteFromFinnhub(symbol: string): Promise<StockQuote | null> {
   try {
+    if (!FINNHUB_API_KEY) throw new Error('No Finnhub API key');
     const response = await fetch(
       `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${FINNHUB_API_KEY}`,
       { signal: AbortSignal.timeout(5000) }
