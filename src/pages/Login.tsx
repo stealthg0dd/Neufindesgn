@@ -41,14 +41,13 @@ export function Login() {
 
   const checkPortfolio = async (accessToken: string) => {
     try {
-      const response = await fetch(
-        `https://${await import('../utils/supabase/info').then(m => m.projectId)}.supabase.co/functions/v1/make-server-22c8dcd8/portfolio/get`,
-        {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-          },
-        }
-      );
+      const projectId = await import('../utils/supabase/info').then(m => m.projectId);
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || `https://${projectId}.supabase.co/functions/v1/make-server-22c8dcd8`;
+      const response = await fetch(`${backendUrl}/portfolio/get`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      });
       const data = await response.json();
       return data.portfolio !== null;
     } catch (error) {
