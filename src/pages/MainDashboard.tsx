@@ -4,6 +4,9 @@ import { Button } from '../components/ui/button';
 import { fetchQuotes } from '../utils/market';
 import { createClient } from '../utils/supabase/client';
 import { Pie } from '../components/ui/chart';
+import { Progress } from '../components/ui/progress';
+import { Avatar } from '../components/ui/avatar';
+import { Bell, User, ChevronDown } from 'lucide-react';
 
 export default function MainDashboard() {
   const [holdings, setHoldings] = useState<any[]>([]);
@@ -78,30 +81,76 @@ export default function MainDashboard() {
 
   return (
     <div className="min-h-screen p-6">
+      {/* Top Navigation */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
         <div className="flex items-center space-x-4">
-          <Button>Portfolio</Button>
-          <Button>Signals</Button>
-          <Button>Analysis</Button>
-          <Button>Settings</Button>
-          <Button className="bg-gradient-to-r from-purple-600 to-blue-600">Upgrade to Pro</Button>
+          <div className="font-bold text-lg">Neufin</div>
+          <nav className="hidden md:flex items-center space-x-3">
+            <Button variant="ghost">Portfolio</Button>
+            <Button variant="ghost">Signals</Button>
+            <Button variant="ghost">Analysis</Button>
+            <Button variant="ghost">Settings</Button>
+          </nav>
+        </div>
+
+        <div className="flex items-center space-x-4">
+          <div className="relative">
+            <button className="flex items-center space-x-2">
+              <Bell className="h-5 w-5" />
+              <span className="text-sm bg-red-500 text-white rounded-full px-2">{signals.length}</span>
+            </button>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Avatar>
+              <div className="h-6 w-6 bg-gray-400 rounded-full" />
+            </Avatar>
+            <div className="hidden sm:block text-sm">John Doe</div>
+            <ChevronDown className="h-4 w-4" />
+          </div>
+
+          <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hidden sm:inline-block">Upgrade to Pro</Button>
         </div>
       </div>
 
       <div className="grid grid-cols-12 gap-6">
+        {/* Left Sidebar */}
         <aside className="col-span-3">
-          <Card>
+          <Card className="mb-4">
             <CardHeader>
               <CardTitle>Quick Stats</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
-                <div>Portfolio Value: <strong>${portfolioValue ?? '—'}</strong></div>
-                <div>Today's Change: <strong>—</strong></div>
-                <div>Alpha Score: <strong>—</strong></div>
-                <div>Active Signals: <strong>—</strong></div>
+              <div className="space-y-3">
+                <div className="text-sm">Portfolio Value</div>
+                <div className="text-2xl font-bold">${portfolioValue ?? '—'}</div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-xs text-muted-foreground">Today's Change</div>
+                    <div className="font-medium">—</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-muted-foreground">Alpha Score</div>
+                    <div className="font-medium">—</div>
+                  </div>
+                </div>
               </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Menu</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2 text-sm">
+                <li>Overview</li>
+                <li>Sentiment Engine</li>
+                <li>Bias Analyzer</li>
+                <li>Digital Twin</li>
+                <li>Holdings</li>
+                <li>Settings</li>
+              </ul>
             </CardContent>
           </Card>
         </aside>
@@ -125,6 +174,38 @@ export default function MainDashboard() {
                 </div>
                 <div className="mt-4">
                   <Button>Rebalance to Twin</Button>
+                </div>
+              </CardContent>
+            </Card>
+          </section>
+
+          {/* Bias Snapshot */}
+          <section className="mb-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Bias Snapshot</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-4 gap-4">
+                  <div className="text-center">
+                    <Progress value={68} className="mx-auto" />
+                    <div className="mt-2 text-sm">Loss Aversion</div>
+                  </div>
+                  <div className="text-center">
+                    <Progress value={42} className="mx-auto" />
+                    <div className="mt-2 text-sm">Disposition Effect</div>
+                  </div>
+                  <div className="text-center">
+                    <Progress value={35} className="mx-auto" />
+                    <div className="mt-2 text-sm">Overconfidence</div>
+                  </div>
+                  <div className="text-center">
+                    <Progress value={28} className="mx-auto" />
+                    <div className="mt-2 text-sm">Herding</div>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <Button variant="ghost">Deep Dive into Biases</Button>
                 </div>
               </CardContent>
             </Card>
@@ -165,6 +246,32 @@ export default function MainDashboard() {
               <div>S&P 500: —</div>
               <div>VIX: —</div>
               <div>Market Sentiment: —</div>
+            </CardContent>
+          </Card>
+
+          {/* Quick Actions & Insights */}
+          <Card className="mt-4">
+            <CardHeader>
+              <CardTitle>Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <Button className="w-full">+ Add Holding</Button>
+                <Button className="w-full">🔄 Sync Portfolio</Button>
+                <Button className="w-full">🧪 Run Scenario</Button>
+                <Button className="w-full">📊 Generate Report</Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="mt-4">
+            <CardHeader>
+              <CardTitle>Top Movers</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div>↑ NVDA: +5.2% ($1,240 gain)</div>
+              <div>↑ MSFT: +2.1% ($580 gain)</div>
+              <div>↓ TSLA: -1.8% ($320 loss)</div>
             </CardContent>
           </Card>
         </aside>
