@@ -418,7 +418,8 @@ export function OnboardingFlow() {
       }
 
       // Call backend API to save holdings and calculate alpha score
-      const response = await fetch('/api/portfolio/analyze', {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+      const response = await fetch(`${backendUrl}/api/analysis/alpha-score`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
