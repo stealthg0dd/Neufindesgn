@@ -110,20 +110,8 @@ async function fetchQuoteFromFinnhub(symbol: string): Promise<StockQuote | null>
 
 // Generate mock stock quote
 function generateMockQuote(symbol: string): StockQuote {
-  const mockPrices: Record<string, number> = {
-    'AAPL': 185.25,
-    'GOOGL': 142.80,
-    'MSFT': 378.90,
-    'TSLA': 245.67,
-    'NVDA': 735.50,
-    'AMZN': 155.20,
-    'META': 485.30,
-    'AMD': 178.40,
-    'NFLX': 625.90,
-    'SPY': 485.20,
-  };
-
-  const basePrice = mockPrices[symbol] || 100 + Math.random() * 200;
+  // Avoid fixed demo prices in production; generate a plausible random base price
+  const basePrice = 50 + Math.random() * 300;
   const change = (Math.random() - 0.5) * 10;
   const changePercent = (change / basePrice) * 100;
 
