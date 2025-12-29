@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button';
 import { fetchQuotes } from '../utils/market';
 import { createClient } from '../utils/supabase/client';
-import { Pie } from '../components/ui/chart';
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { Progress } from '../components/ui/progress';
 import { Avatar } from '../components/ui/avatar';
 import { Bell, User, ChevronDown } from 'lucide-react';
@@ -165,11 +165,33 @@ export default function MainDashboard() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <h3 className="text-sm font-medium mb-2">Your Portfolio</h3>
-                    <Pie data={holdings.map(h => ({ label: h.symbol, value: h.shares }))} />
+                    <ResponsiveContainer width="100%" height={150}>
+                      <PieChart>
+                        <Pie 
+                          data={holdings.map(h => ({ name: h.symbol, value: h.shares }))} 
+                          dataKey="value" 
+                          nameKey="name"
+                          cx="50%" cy="50%" outerRadius={40}
+                        >
+                          {holdings.map((_, idx) => <Cell key={idx} fill={`hsl(${idx * 60}, 70%, 50%)`} />)}
+                        </Pie>
+                      </PieChart>
+                    </ResponsiveContainer>
                   </div>
                   <div>
                     <h3 className="text-sm font-medium mb-2">Neural Twin Optimal</h3>
-                    <Pie data={holdings.map(h => ({ label: h.symbol, value: Math.max(1, h.shares - 2) }))} />
+                    <ResponsiveContainer width="100%" height={150}>
+                      <PieChart>
+                        <Pie 
+                          data={holdings.map(h => ({ name: h.symbol, value: Math.max(1, h.shares - 2) }))} 
+                          dataKey="value" 
+                          nameKey="name"
+                          cx="50%" cy="50%" outerRadius={40}
+                        >
+                          {holdings.map((_, idx) => <Cell key={idx} fill={`hsl(${idx * 60}, 70%, 50%)`} />)}
+                        </Pie>
+                      </PieChart>
+                    </ResponsiveContainer>
                   </div>
                 </div>
                 <div className="mt-4">

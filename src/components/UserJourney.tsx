@@ -53,11 +53,11 @@ const journeyStages = [
     icon: <TrendingUp className="w-5 h-5" />,
     content: {
       topSentiments: [
-        { ticker: 'AAPL', score: 8.4, confidence: 87, rationale: 'AI partnership rumors driving optimism' },
-        { ticker: 'TSLA', score: 6.1, confidence: 74, rationale: 'Production concerns weighing on sentiment' },
-        { ticker: 'NVDA', score: 9.2, confidence: 91, rationale: 'Datacenter demand exceeding expectations' }
+        { ticker: 'Tech Stock A', score: 8.4, confidence: 87, rationale: 'Positive sector catalysts driving optimism' },
+        { ticker: 'Tech Stock B', score: 6.1, confidence: 74, rationale: 'Mixed fundamentals weighing on sentiment' },
+        { ticker: 'Tech Stock C', score: 9.2, confidence: 91, rationale: 'Strong growth metrics exceeding expectations' }
       ],
-      recommendation: 'High confidence bullish signal on NVDA - consider increasing position'
+      recommendation: 'High confidence bullish signals detected - consider positions in top-ranked stocks'
     }
   },
   {

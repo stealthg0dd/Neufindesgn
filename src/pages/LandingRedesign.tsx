@@ -92,20 +92,20 @@ function ProblemSection() {
   const problems = [
     {
       title: 'Loss Aversion',
-      description: 'You held TSLA down 40% for 8 months',
-      cost: '$4,200',
+      description: 'Holding losers too long hoping for recovery',
+      cost: '4-8%',
       icon: '😰',
     },
     {
       title: 'Disposition Effect',
-      description: 'You sold NVDA at +15%, it\'s now +180%',
-      cost: '$12,400',
+      description: 'Selling winners too early while holding losers',
+      cost: '8-15%',
       icon: '😞',
     },
     {
       title: 'Herding',
-      description: 'You bought META at peak with everyone',
-      cost: '$2,800',
+      description: 'Buying at peaks following crowd momentum',
+      cost: '2-5%',
       icon: '🐑',
     },
   ];
@@ -265,19 +265,19 @@ function SolutionSection() {
 function SocialProofSection() {
   const testimonials = [
     {
-      quote: 'Neufin saved me $8K by alerting me to sell COIN before the crash',
+      quote: 'Neufin identified behavioral patterns I didn\'t see and saved me from costly mistakes',
       author: 'Sarah K',
-      portfolio: '$240K',
+      portfolio: 'Multi-six-figure portfolio',
     },
     {
-      quote: "I didn't realize I was holding losers 3x longer than winners. Game changer.",
+      quote: "I didn't realize I was holding losers longer than winners. This changed how I trade.",
       author: 'David M',
-      portfolio: '$180K',
+      portfolio: 'Six-figure investor',
     },
     {
-      quote: "The digital twin predicted I'd panic sell. I didn't. Saved 12% returns.",
+      quote: "The bias detection prevented panic selling during market volatility.",
       author: 'Michael R',
-      portfolio: '$420K',
+      portfolio: 'Experienced trader',
     },
   ];
 

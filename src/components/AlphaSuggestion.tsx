@@ -7,17 +7,42 @@ import { motion } from 'motion/react';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 
+// Generate dynamic demo suggestion based on seed
+const generateDemoSuggestion = () => {
+  const tickers = ['AMD', 'NVDA', 'MSFT', 'GOOGL', 'TSLA'];
+  const companies = { 'AMD': 'Advanced Micro Devices', 'NVDA': 'NVIDIA', 'MSFT': 'Microsoft', 'GOOGL': 'Alphabet', 'TSLA': 'Tesla' };
+  
+  const ticker = tickers[Math.floor(Math.random() * tickers.length)];
+  const currentPrice = Math.round((50 + Math.random() * 400) * 100) / 100;
+  const entryPrice = currentPrice * (0.95 + Math.random() * 0.05);
+  const targetPrice = currentPrice * (1.08 + Math.random() * 0.12);
+  const stopLoss = currentPrice * (0.88 + Math.random() * 0.05);
+  const returnPct = Math.round(((targetPrice - entryPrice) / entryPrice) * 100 * 10) / 10;
+  const riskRewardRatio = Math.round(((targetPrice - entryPrice) / (entryPrice - stopLoss)) * 10) / 10;
+  
+  return {
+    currentPrice,
+    entryPrice,
+    targetPrice,
+    stopLoss,
+    returnPct,
+    riskRewardRatio
+  };
+};
+
+const demoValues = generateDemoSuggestion();
+
 const todaysSuggestion = {
   ticker: 'AMD',
   company: 'Advanced Micro Devices',
   action: 'LONG',
-  entryPrice: '$142.50',
-  targetPrice: '$158.00',
-  stopLoss: '$135.00',
+  entryPrice: `$${demoValues.entryPrice.toFixed(2)}`,
+  targetPrice: `$${demoValues.targetPrice.toFixed(2)}`,
+  stopLoss: `$${demoValues.stopLoss.toFixed(2)}`,
   confidence: 95,
   timeframe: '2-3 weeks',
-  potentialReturn: '+10.9%',
-  riskReward: '1:2.1',
+  potentialReturn: `+${demoValues.returnPct}%`,
+  riskReward: `1:${demoValues.riskRewardRatio}`,
   
   analysis: {
     sentiment: {
