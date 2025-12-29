@@ -66,8 +66,9 @@ export function PortfolioSetup() {
       }
 
       // Create link token
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || `https://${projectId}.supabase.co/functions/v1/make-server-22c8dcd8`;
       const linkTokenResponse = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-22c8dcd8/plaid/create-link-token`,
+        `${backendUrl}/plaid/create-link-token`,
         {
           method: 'POST',
           headers: {
@@ -128,7 +129,7 @@ export function PortfolioSetup() {
           try {
             // Exchange public token for access token and get holdings
             const exchangeResponse = await fetch(
-              `https://${projectId}.supabase.co/functions/v1/make-server-22c8dcd8/plaid/exchange-token`,
+              `${backendUrl}/plaid/exchange-token`,
               {
                 method: 'POST',
                 headers: {
@@ -217,8 +218,9 @@ export function PortfolioSetup() {
         setupCompletedAt: new Date().toISOString(),
       };
 
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || `https://${projectId}.supabase.co/functions/v1/make-server-22c8dcd8`;
       const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-22c8dcd8/portfolio/save`,
+        `${backendUrl}/portfolio/save`,
         {
           method: 'POST',
           headers: {
