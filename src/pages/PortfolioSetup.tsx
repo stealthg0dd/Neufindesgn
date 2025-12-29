@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createClient } from '../utils/supabase/client';
 import { projectId, publicAnonKey } from '../utils/supabase/info';
+import { fetchQuotes } from '../utils/market';
 
 interface Holding {
   symbol: string;
@@ -195,9 +196,20 @@ export function PortfolioSetup() {
         return;
       }
 
-      // Calculate portfolio value
-      const totalValue = validHoldings.reduce((sum, h) => sum + (h.shares * h.avgCost), 0);
-
+      // Calculate portfolio current market value using live quotes when available
+      let totalValue = validHoldings.reduce((sum, h) => sum + (h.shares * h.avgCost), 0);
+      try {
+        const symbols = validHoldings.map(h => h.symbol).filter(Boolean);
+        if (symbols.length) {
+          const quotes = await fetchQuotes(symbols);
+          totalValue = validHoldings.reduce((sum, h) => {
+            const price = quotes[h.symbol]?.price ?? h.avgCost;
+            return sum + (h.shares * (price ?? h.avgCost));
+          }, 0);
+        }
+      } catch (err) {
+        console.warn('Failed to fetch live quotes while saving portfolio', err);
+      }
       const portfolioData = {
         holdings: validHoldings,
         totalValue,
