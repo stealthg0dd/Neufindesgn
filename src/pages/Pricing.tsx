@@ -182,21 +182,19 @@ export function Pricing() {
       const priceId = isYearly ? plan.stripePriceIdYearly : plan.stripePriceIdMonthly;
 
       // Create Stripe checkout session
-      const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-22c8dcd8/stripe/create-checkout`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`,
-            'Content-Type': 'application/json',
-            'origin': window.location.origin,
-          },
-          body: JSON.stringify({
-            priceId,
-            plan: plan.name,
-          }),
-        }
-      );
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || `https://${projectId}.supabase.co/functions/v1/make-server-22c8dcd8`;
+      const response = await fetch(`${backendUrl}/stripe/create-checkout`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+          'origin': window.location.origin,
+        },
+        body: JSON.stringify({
+          priceId,
+          plan: plan.name,
+        }),
+      });
 
       const data = await response.json();
 
