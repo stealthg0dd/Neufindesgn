@@ -18,20 +18,73 @@ import { generalRateLimit } from './middleware/rateLimit';
 // Load environment variables
 config();
 
+// Validate required environment variables
+const requiredEnvVars = [
+  'DATABASE_URL',
+  'SUPABASE_URL',
+  'SUPABASE_ANON_KEY',
+  'SUPABASE_SERVICE_ROLE_KEY',
+  'JWT_SECRET',
+];
+
+const missingEnvVars = requiredEnvVars.filter(env => !process.env[env]);
+if (missingEnvVars.length > 0 && process.env.NODE_ENV === 'production') {
+  console.error('❌ Missing required environment variables:', missingEnvVars);
+  process.exit(1);
+}
+
 const app = express();
 const server = createServer(app);
+
+// Get CORS origins - support multiple origins in production
+const getAllowedOrigins = (): string[] => {
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+  const origins = [frontendUrl];
+  
+  // Add additional origins if specified
+  if (process.env.ADDITIONAL_ORIGINS) {
+    origins.push(...process.env.ADDITIONAL_ORIGINS.split(',').map(o => o.trim()));
+  }
+  
+  return origins;
+};
+
+const allowedOrigins = getAllowedOrigins();
+
 const io = new SocketIOServer(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: allowedOrigins,
     methods: ['GET', 'POST'],
+    credentials: true,
   },
 });
 
 // Middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      connectSrc: ["'self'", ...allowedOrigins],
+    },
+  },
+}));
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));

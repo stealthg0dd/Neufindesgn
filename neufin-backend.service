@@ -1,0 +1,30 @@
+[Unit]
+Description=Neufin Backend API Service
+After=network.target postgres.service redis.service
+Wants=postgres.service redis.service
+
+[Service]
+Type=simple
+User=neufin
+WorkingDirectory=/opt/neufin/backend
+EnvironmentFile=/opt/neufin/backend/.env
+ExecStart=/usr/local/bin/node /opt/neufin/backend/dist/server.js
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=neufin-backend
+
+# Security settings
+PrivateTmp=yes
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/opt/neufin/backend
+
+# Resource limits
+LimitNOFILE=65535
+LimitNPROC=65535
+
+[Install]
+WantedBy=multi-user.target

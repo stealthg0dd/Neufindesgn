@@ -1,0 +1,28 @@
+[Unit]
+Description=Neufin Frontend Service
+After=network.target
+
+[Service]
+Type=simple
+User=neufin
+WorkingDirectory=/opt/neufin
+ExecStart=/usr/local/bin/serve -s dist -l 3000
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=neufin-frontend
+
+# Security settings
+PrivateTmp=yes
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/opt/neufin
+
+# Resource limits
+LimitNOFILE=65535
+LimitNPROC=65535
+
+[Install]
+WantedBy=multi-user.target
